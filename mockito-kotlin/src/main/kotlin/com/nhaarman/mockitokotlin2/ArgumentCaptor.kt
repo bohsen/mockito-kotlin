@@ -30,6 +30,13 @@ import kotlin.reflect.KClass
 
 inline fun <reified T : Any?> argumentCaptor(): KArgumentCaptor<T> = KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
 
+@Deprecated(level = DeprecationLevel.WARNING,
+        message = "This was deprecated in version 2.0",
+        replaceWith = ReplaceWith(
+                expression = "Use val captor = argumentCaptor<NullableType?>() instead",
+                imports = ["com.nhaarman.mockitokotlin2.*"]))
+inline fun <reified T : Any> nullableArgumentCaptor(): KArgumentCaptor<T?> = KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
+
 inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T = captor.capture() ?: createInstance<T>()
 
 class KArgumentCaptor<out T : Any?>(private val captor: ArgumentCaptor<T>, private val tClass: KClass<*>) {
