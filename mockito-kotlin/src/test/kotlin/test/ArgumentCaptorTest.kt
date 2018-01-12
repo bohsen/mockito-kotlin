@@ -30,7 +30,7 @@ class ArgumentCaptorTest : TestBase() {
         m.nullableString(null)
 
         /* Then */
-        val captor = argumentCaptor<String>()
+        val captor = argumentCaptor<String?>()
         verify(m).nullableString(captor.capture())
         expect(captor.lastValue).toBeNull()
     }
@@ -44,7 +44,7 @@ class ArgumentCaptorTest : TestBase() {
         m.nullableString(null)
 
         /* Then */
-        val captor = nullableArgumentCaptor<String>()
+        val captor = argumentCaptor<String?>()
         verify(m).nullableString(captor.capture())
         expect(captor.lastValue).toBeNull()
     }
@@ -74,7 +74,7 @@ class ArgumentCaptorTest : TestBase() {
         m.nullableString(null)
 
         /* Then */
-        val captor = nullableArgumentCaptor<String>()
+        val captor = argumentCaptor<String?>()
         verify(m, times(2)).nullableString(captor.capture())
         expect(captor.allValues).toBe(listOf("test", null))
     }
