@@ -80,7 +80,7 @@ inline fun <reified T : Any> argWhere(noinline predicate: (T) -> Boolean) = argT
  *
  * @param predicate A function that performs actions to verify an argument [T].
  */
-inline fun <reified T : Any> check(noinline predicate: (T) -> Unit) = Mockito.argThat<T?> { arg ->
+inline fun <reified T : Any> check(noinline predicate: (T) -> Unit) = Mockito.argThat { arg ->
     if (arg == null) error("""The argument passed to the predicate was null.
 
 If you are trying to verify an argument to be null, use `isNull()`.
@@ -116,57 +116,57 @@ inline fun <reified T : Any> isA(): T = Mockito.isA(T::class.java) ?: createInst
 fun <T : Any> isNotNull(): T? = Mockito.isNotNull()
 fun <T : Any> isNull(): T? = Mockito.isNull()
 
-inline fun <reified T : Any> mock(
-      extraInterfaces: Array<KClass<out Any>>? = null,
-      name: String? = null,
-      spiedInstance: Any? = null,
-      defaultAnswer: Answer<Any>? = null,
-      serializable: Boolean = false,
-      serializableMode: SerializableMode? = null,
-      verboseLogging: Boolean = false,
-      invocationListeners: Array<InvocationListener>? = null,
-      stubOnly: Boolean = false,
-      @Incubating useConstructor: Boolean = false,
-      @Incubating outerInstance: Any? = null
+inline fun <reified T : Any?> mock(
+        extraInterfaces: Array<KClass<out Any>>? = null,
+        name: String? = null,
+        spiedInstance: Any? = null,
+        defaultAnswer: Answer<Any>? = null,
+        serializable: Boolean = false,
+        serializableMode: SerializableMode? = null,
+        verboseLogging: Boolean = false,
+        invocationListeners: Array<InvocationListener>? = null,
+        stubOnly: Boolean = false,
+        @Incubating useConstructor: Boolean = false,
+        @Incubating outerInstance: Any? = null
 ): T = Mockito.mock(T::class.java, withSettings(
-      extraInterfaces = extraInterfaces,
-      name = name,
-      spiedInstance = spiedInstance,
-      defaultAnswer = defaultAnswer,
-      serializable = serializable,
-      serializableMode = serializableMode,
-      verboseLogging = verboseLogging,
-      invocationListeners = invocationListeners,
-      stubOnly = stubOnly,
-      useConstructor = useConstructor,
-      outerInstance = outerInstance
-))!!
+        extraInterfaces = extraInterfaces,
+        name = name,
+        spiedInstance = spiedInstance,
+        defaultAnswer = defaultAnswer,
+        serializable = serializable,
+        serializableMode = serializableMode,
+        verboseLogging = verboseLogging,
+        invocationListeners = invocationListeners,
+        stubOnly = stubOnly,
+        useConstructor = useConstructor,
+        outerInstance = outerInstance
+))
 
-inline fun <reified T : Any> mock(
-      extraInterfaces: Array<KClass<out Any>>? = null,
-      name: String? = null,
-      spiedInstance: Any? = null,
-      defaultAnswer: Answer<Any>? = null,
-      serializable: Boolean = false,
-      serializableMode: SerializableMode? = null,
-      verboseLogging: Boolean = false,
-      invocationListeners: Array<InvocationListener>? = null,
-      stubOnly: Boolean = false,
-      @Incubating useConstructor: Boolean = false,
-      @Incubating outerInstance: Any? = null,
-      stubbing: KStubbing<T>.(T) -> Unit
+inline fun <reified T : Any?> mock(
+        extraInterfaces: Array<KClass<out Any>>? = null,
+        name: String? = null,
+        spiedInstance: Any? = null,
+        defaultAnswer: Answer<Any>? = null,
+        serializable: Boolean = false,
+        serializableMode: SerializableMode? = null,
+        verboseLogging: Boolean = false,
+        invocationListeners: Array<InvocationListener>? = null,
+        stubOnly: Boolean = false,
+        @Incubating useConstructor: Boolean = false,
+        @Incubating outerInstance: Any? = null,
+        stubbing: KStubbing<T>.(T) -> Unit
 ): T = Mockito.mock(T::class.java, withSettings(
-      extraInterfaces = extraInterfaces,
-      name = name,
-      spiedInstance = spiedInstance,
-      defaultAnswer = defaultAnswer,
-      serializable = serializable,
-      serializableMode = serializableMode,
-      verboseLogging = verboseLogging,
-      invocationListeners = invocationListeners,
-      stubOnly = stubOnly,
-      useConstructor = useConstructor,
-      outerInstance = outerInstance
+        extraInterfaces = extraInterfaces,
+        name = name,
+        spiedInstance = spiedInstance,
+        defaultAnswer = defaultAnswer,
+        serializable = serializable,
+        serializableMode = serializableMode,
+        verboseLogging = verboseLogging,
+        invocationListeners = invocationListeners,
+        stubOnly = stubOnly,
+        useConstructor = useConstructor,
+        outerInstance = outerInstance
 )).apply {
     KStubbing(this).stubbing(this)
 }!!
@@ -256,17 +256,17 @@ fun verifyZeroInteractions(vararg mocks: Any) = Mockito.verifyZeroInteractions(*
 fun <T> whenever(methodCall: T): OngoingStubbing<T> = Mockito.`when`(methodCall)!!
 
 fun withSettings(
-      extraInterfaces: Array<KClass<out Any>>? = null,
-      name: String? = null,
-      spiedInstance: Any? = null,
-      defaultAnswer: Answer<Any>? = null,
-      serializable: Boolean = false,
-      serializableMode: SerializableMode? = null,
-      verboseLogging: Boolean = false,
-      invocationListeners: Array<InvocationListener>? = null,
-      stubOnly: Boolean = false,
-      @Incubating useConstructor: Boolean = false,
-      @Incubating outerInstance: Any? = null
+        extraInterfaces: Array<KClass<out Any>>? = null,
+        name: String? = null,
+        spiedInstance: Any? = null,
+        defaultAnswer: Answer<Any>? = null,
+        serializable: Boolean = false,
+        serializableMode: SerializableMode? = null,
+        verboseLogging: Boolean = false,
+        invocationListeners: Array<InvocationListener>? = null,
+        stubOnly: Boolean = false,
+        @Incubating useConstructor: Boolean = false,
+        @Incubating outerInstance: Any? = null
 ): MockSettings = Mockito.withSettings().apply {
     extraInterfaces?.let { extraInterfaces(*it.map { it.java }.toTypedArray()) }
     name?.let { name(it) }

@@ -42,7 +42,7 @@ import java.io.*
 class MockitoTest : TestBase() {
 
     @Test
-    fun anyString() {
+    fun `test any with string type`() {
         mock<Methods>().apply {
             string("")
             verify(this).string(any())
@@ -50,7 +50,23 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun anyClosedClass() {
+    fun `test isNull with nullable type`() {
+        mock<Methods?>()?.apply {
+            nullableString(null)
+            verify(this).nullableString(isNull())
+        }
+    }
+
+    @Test
+    fun `test isNotNull with nullable type`() {
+        mock<Methods?>()?.apply {
+            nullableString("")
+            verify(this).nullableString(isNotNull())
+        }
+    }
+
+    @Test
+    fun `test any with closed class`() {
         mock<Methods>().apply {
             closed(Closed())
             verify(this).closed(any())
