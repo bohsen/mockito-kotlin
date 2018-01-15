@@ -51,7 +51,7 @@ import java.io.Serializable
 class MockitoTest : TestBase() {
 
     @Test
-    fun `Test any with string type`() {
+    fun `Should verify any() when invoked with String as argument`() {
         mock<Methods>().apply {
             string("")
             verify(this).string(any())
@@ -59,7 +59,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `Test isNull with nullable type`() {
+    fun `Should verify isNull() when invoked with null as argument`() {
         mock<Methods?>()?.apply {
             nullableString(null)
             verify(this).nullableString(isNull())
@@ -67,7 +67,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `Test isNotNull with nullable type`() {
+    fun `Should verify isNotNull() when invoked with String as argument`() {
         mock<Methods?>()?.apply {
             nullableString("")
             verify(this).nullableString(isNotNull())
@@ -75,7 +75,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `Test any with closed class`() {
+    fun `Should verify any() when invoked with custom type`() {
         mock<Methods>().apply {
             closed(Closed())
             verify(this).closed(any())
@@ -83,7 +83,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `Test any with IntArray`() {
+    fun `Should verify any() when invoked with IntArray`() {
         mock<Methods>().apply {
             intArray(intArrayOf())
             verify(this).intArray(any())
@@ -91,7 +91,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `Test any with closed ClassArray`() {
+    fun `Should verify anyArray() when invoked with array of custom type`() {
         mock<Methods>().apply {
             closedArray(arrayOf(Closed(), Closed()))
             verify(this).closedArray(anyArray())
@@ -99,7 +99,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `Test any with ClassArray that includes a null`() {
+    fun `Should verify anyArray() when invoked with array of custom types including null`() {
         mock<Methods>().apply {
             closedNullableArray(arrayOf(Closed(), null, Closed()))
             verify(this).closedNullableArray(anyArray())
@@ -107,7 +107,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `Test any with String vararg`() {
+    fun `Should verify anyVararg() when invoked with String array`() {
         mock<Methods>().apply {
             stringVararg(String(), String())
             verify(this).stringVararg(anyVararg())
@@ -115,7 +115,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `When any used with null value, any should not verify`() {
+    fun `When any() used with null value, any() should not verify invocation`() {
         mock<Methods>().apply {
             nullableString(null)
             verify(this, never()).nullableString(any())
@@ -123,7 +123,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `When anyOrNull is used with null value, anyOrNull should verify`() {
+    fun `When anyOrNull is used with null value, anyOrNull should verify invocation`() {
         mock<Methods>().apply {
             nullableString(null)
             verify(this).nullableString(anyOrNull())
@@ -131,7 +131,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `Test any with throwable that has single throwable constructor`() {
+    fun `Should verify any() when invoked with throwable class`() {
         mock<Methods>().apply {
             throwableClass(ThrowableClass(IOException()))
             verify(this).throwableClass(any())
