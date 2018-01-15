@@ -1,5 +1,7 @@
 package test
 
+import org.mockito.ArgumentMatcher
+
 /*
 * The MIT License
 *
@@ -54,13 +56,14 @@ interface Methods {
     fun closedNullableArray(a: Array<Closed?>)
     fun closedCollection(c: Collection<Closed>)
     fun closedList(c: List<Closed>)
+    fun closedListWithNullValues(c: List<Closed?>)
     fun closedStringMap(m: Map<Closed, String>)
     fun closedSet(s: Set<Closed>)
     fun string(s: String)
     fun stringVararg(vararg s: String)
     fun nullableString(s: String?)
     fun anyType(any: Any)
-    fun anyNullType(any: Any?)
+    fun anyNullableType(any: Any?)
     fun int(i: Int)
     fun closedVararg(vararg c: Closed)
     fun throwableClass(t: ThrowableClass)

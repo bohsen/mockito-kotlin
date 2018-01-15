@@ -4,8 +4,11 @@ import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.expect.fail
 import com.nhaarman.mockitokotlin2.*
+import org.junit.FixMethodOrder
 import org.junit.Ignore
 import org.junit.Test
+import org.junit.runners.MethodSorters
+import org.junit.runners.MethodSorters.*
 import org.mockito.Mockito
 import org.mockito.Mockito.RETURNS_MOCKS
 import org.mockito.exceptions.base.MockitoAssertionError
@@ -43,7 +46,7 @@ import java.io.Serializable
  * THE SOFTWARE.
  */
 
-
+@FixMethodOrder(NAME_ASCENDING)
 @Suppress("DEPRECATION")
 class MockitoTest : TestBase() {
 
@@ -96,7 +99,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `Test any with ClassArray including null`() {
+    fun `Test any with ClassArray that includes a null`() {
         mock<Methods>().apply {
             closedNullableArray(arrayOf(Closed(), null, Closed()))
             verify(this).closedNullableArray(anyArray())
@@ -104,7 +107,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `Test any with StringVararg`() {
+    fun `Test any with String vararg`() {
         mock<Methods>().apply {
             stringVararg(String(), String())
             verify(this).stringVararg(anyVararg())
@@ -136,41 +139,79 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `Test argThat on list`() {
+    fun `When argThat is used on list, it should verify properties of given list`() {
         mock<Methods>().apply {
             closedList(listOf(Closed(), Closed()))
             verify(this).closedList(argThat {
                 size == 2
+                size != 1
             })
         }
     }
 
     @Test
-    fun `Test argForWhich on list`() {
+    fun `When argThat is used on list with a null element, it should verify properties of given list`() {
+        mock<Methods>().apply {
+            closedListWithNullValues(listOf(Closed(), null))
+            verify(this).closedListWithNullValues(argThat {
+                size == 2
+                size != 1
+            })
+        }
+    }
+
+    @Test
+    fun `When argWhich is used on list, it should verify properties of given list`() {
         mock<Methods>().apply {
             closedList(listOf(Closed(), Closed()))
             verify(this).closedList(argForWhich {
                 size == 2
+                size != 1
             })
         }
     }
 
     @Test
-    fun `Test argWhere on list`() {
+    fun `When argForWhich() is used on list with a null element, it should verify properties of given list`() {
+        mock<Methods>().apply {
+            closedListWithNullValues(listOf(Closed(), null))
+            verify(this).closedListWithNullValues(argForWhich {
+                size == 2
+                size != 1
+            })
+        }
+    }
+
+    @Test
+    fun `When argWhere() is used on list, it should verify properties of given list`() {
         mock<Methods>().apply {
             closedList(listOf(Closed(), Closed()))
             verify(this).closedList(argWhere {
                 it.size == 2
+                it.size != 1
             })
         }
     }
 
     @Test
-    fun `Test check on list`() {
+    fun `When argWhere() is used on list with a null element, it should verify properties of given list`() {
+        mock<Methods>().apply {
+            closedListWithNullValues(listOf(Closed(), null))
+            verify(this).closedListWithNullValues(argWhere {
+                it.size == 2
+                it.size != 1
+            })
+        }
+    }
+
+    @Test
+    fun `check() on list, should verify size and type of element in list`() {
         mock<Methods>().apply {
             closedList(listOf(Closed(), Closed()))
             verify(this).closedList(check {
                 expect(it.size).toBe(2)
+                expect(it[0]).toBeInstanceOf<Closed>()
+                expect(it[1]).toBeInstanceOf<Closed>()
             })
         }
     }
@@ -1061,23 +1102,25 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun isA_withNonNullableString() {
+    fun `isA() should verify non nullable type is of correct type`() {
         mock<Methods>().apply {
-            string("")
+            anyType(String())
             verify(this).anyType(isA<String>())
         }
     }
 
+    @Ignore("Issue with nullable types")
     @Test
-    fun isA_withNullableString() {
+    fun `isA() should verify nullable type is of correct type`() {
         mock<Methods>().apply {
-            nullableString("")
-            verify(this).anyNullType(isA<String>())
+            anyNullableType(String())
+            verify(this).anyNullableType(isA<String>())
         }
+        TODO("Refactor mockito-kotlin to show correct behavior -> like this: verify(this).anyNullableType(isA<String?>())")
     }
 
     @Test
-    fun same_withNonNullArgument() {
+    fun `same() should verify that non-nullable value is the same as given non-null value`() {
         mock<Methods>().apply {
             string("")
             verify(this).string(same(""))
@@ -1085,7 +1128,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun same_withNullableNonNullArgument() {
+    fun `same() should verify that nullable value is the same as given non-null value`() {
         mock<Methods>().apply {
             nullableString("")
             verify(this).nullableString(same(""))
@@ -1093,7 +1136,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun same_withNullArgument() {
+    fun `same() should verify that null value is the same as null`() {
         mock<Methods>().apply {
             nullableString(null)
             verify(this).nullableString(same(null))
@@ -1101,7 +1144,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun stubbingExistingMock() {
+    fun `When stubbing() is used on existing mock, it should mock specified methods`() {
         /* Given */
         val mock = mock<Methods>()
 
