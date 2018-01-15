@@ -25,9 +25,12 @@ class NullCasterTest : TestBase() {
         val s: String = nullCaster.createInstance(String::class)
 
         /* When */
-        acceptNonNullableString(s)
+        expect(s).toBeNull()
+
+        /* Then */
+        acceptNullWithNonNullableString(s)
     }
 
-    private fun acceptNonNullableString(@Suppress("UNUSED_PARAMETER") s: String) {
+    private fun acceptNullWithNonNullableString(@Suppress("UNUSED_PARAMETER") s: String) {
     }
 }

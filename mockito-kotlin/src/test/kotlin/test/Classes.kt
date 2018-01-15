@@ -29,6 +29,10 @@ open class Open {
     open fun go(vararg arg: Any?) {
     }
 
+    /**
+     * Adds one to every integer element in array
+     * @param a Array to be modified
+     */
     open fun modifiesContents(a: IntArray) {
         for (i in 0..a.size - 1) {
             a[i] = a[i] + 1
@@ -53,6 +57,7 @@ interface Methods {
     fun closedStringMap(m: Map<Closed, String>)
     fun closedSet(s: Set<Closed>)
     fun string(s: String)
+    fun stringVararg(vararg s: String)
     fun nullableString(s: String?)
     fun int(i: Int)
     fun closedVararg(vararg c: Closed)

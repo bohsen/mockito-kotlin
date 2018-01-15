@@ -1,7 +1,10 @@
 package test
 
-import com.nhaarman.expect.*
+import com.nhaarman.expect.expect
+import com.nhaarman.expect.expectErrorWithMessage
+import com.nhaarman.expect.fail
 import com.nhaarman.mockitokotlin2.*
+import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.RETURNS_MOCKS
@@ -10,7 +13,9 @@ import org.mockito.exceptions.verification.WantedButNotInvoked
 import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode.BASIC
 import org.mockito.stubbing.Answer
-import java.io.*
+import java.io.IOException
+import java.io.PrintStream
+import java.io.Serializable
 
 
 /*
@@ -38,11 +43,12 @@ import java.io.*
  * THE SOFTWARE.
  */
 
+
 @Suppress("DEPRECATION")
 class MockitoTest : TestBase() {
 
     @Test
-    fun `test any with string type`() {
+    fun `Test any with string type`() {
         mock<Methods>().apply {
             string("")
             verify(this).string(any())
@@ -50,7 +56,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `test isNull with nullable type`() {
+    fun `Test isNull with nullable type`() {
         mock<Methods?>()?.apply {
             nullableString(null)
             verify(this).nullableString(isNull())
@@ -58,7 +64,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `test isNotNull with nullable type`() {
+    fun `Test isNotNull with nullable type`() {
         mock<Methods?>()?.apply {
             nullableString("")
             verify(this).nullableString(isNotNull())
@@ -66,7 +72,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun `test any with closed class`() {
+    fun `Test any with closed class`() {
         mock<Methods>().apply {
             closed(Closed())
             verify(this).closed(any())
@@ -74,7 +80,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun anyIntArray() {
+    fun `Test any with IntArray`() {
         mock<Methods>().apply {
             intArray(intArrayOf())
             verify(this).intArray(any())
@@ -82,31 +88,31 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun anyClassArray() {
+    fun `Test any with closed ClassArray`() {
         mock<Methods>().apply {
-            closedArray(arrayOf(Closed()))
+            closedArray(arrayOf(Closed(), Closed()))
             verify(this).closedArray(anyArray())
         }
     }
 
     @Test
-    fun anyNullableClassArray() {
+    fun `Test any with ClassArray including null`() {
         mock<Methods>().apply {
-            closedNullableArray(arrayOf(Closed(), null))
+            closedNullableArray(arrayOf(Closed(), null, Closed()))
             verify(this).closedNullableArray(anyArray())
         }
     }
 
     @Test
-    fun anyStringVararg() {
+    fun `Test any with StringVararg`() {
         mock<Methods>().apply {
-            closedVararg(Closed(), Closed())
-            verify(this).closedVararg(anyVararg())
+            stringVararg(String(), String())
+            verify(this).stringVararg(anyVararg())
         }
     }
 
     @Test
-    fun anyNull_neverVerifiesAny() {
+    fun `When any used with null value, any should not verify`() {
         mock<Methods>().apply {
             nullableString(null)
             verify(this, never()).nullableString(any())
@@ -114,16 +120,15 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun anyNull_verifiesAnyOrNull() {
+    fun `When anyOrNull is used with null value, anyOrNull should verify`() {
         mock<Methods>().apply {
             nullableString(null)
             verify(this).nullableString(anyOrNull())
         }
     }
 
-    /** https://github.com/nhaarman/mockito-kotlin/issues/27 */
     @Test
-    fun anyThrowableWithSingleThrowableConstructor() {
+    fun `Test any with throwable that has single throwable constructor`() {
         mock<Methods>().apply {
             throwableClass(ThrowableClass(IOException()))
             verify(this).throwableClass(any())
@@ -131,7 +136,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun listArgThat() {
+    fun `Test argThat on list`() {
         mock<Methods>().apply {
             closedList(listOf(Closed(), Closed()))
             verify(this).closedList(argThat {
@@ -141,7 +146,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun listArgForWhich() {
+    fun `Test argForWhich on list`() {
         mock<Methods>().apply {
             closedList(listOf(Closed(), Closed()))
             verify(this).closedList(argForWhich {
@@ -151,7 +156,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun listArgWhere() {
+    fun `Test argWhere on list`() {
         mock<Methods>().apply {
             closedList(listOf(Closed(), Closed()))
             verify(this).closedList(argWhere {
@@ -161,7 +166,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun listArgCheck() {
+    fun `Test check on list`() {
         mock<Methods>().apply {
             closedList(listOf(Closed(), Closed()))
             verify(this).closedList(check {
@@ -171,7 +176,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun checkWithNullArgument_throwsError() {
+    fun `check() with null as argument should throw error`() {
         mock<Methods>().apply {
             nullableString(null)
 
@@ -182,7 +187,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun atLeastXInvocations() {
+    fun `atLeast() should verify that method was invoked at least x number of times`() {
         mock<Methods>().apply {
             string("")
             string("")
@@ -192,7 +197,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testAtLeastOnce() {
+    fun `atLeastOnce() should verify that method was invoked at least once`() {
         mock<Methods>().apply {
             string("")
             string("")
@@ -202,7 +207,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun atMostXInvocations() {
+    fun `atMost() should verify that method was invoked at most x number of times`() {
         mock<Methods>().apply {
             string("")
             string("")
@@ -212,7 +217,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testCalls() {
+    fun `calls() should verify that method was invoked x number of times`() {
         mock<Methods>().apply {
             string("")
             string("")
@@ -222,7 +227,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testInOrderWithLambda() {
+    fun `inOrder() should work with lambda (function as a type)`() {
         /* Given */
         val a = mock<() -> Unit>()
         val b = mock<() -> Unit>()
@@ -239,18 +244,18 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testClearInvocations() {
-        val mock = mock<Methods>().apply {
+    fun `clearInvocations() should prevent method from being invoked`() {
+        mock<Methods>().apply {
             string("")
+            clearInvocations(this)
+
+            verify(this, never()).string(any())
         }
 
-        clearInvocations(mock)
-
-        verify(mock, never()).string(any())
     }
 
     @Test
-    fun testDescription() {
+    fun `when assertion error is thrown, description() should add a specific description`() {
         try {
             mock<Methods>().apply {
                 verify(this, description("Test")).string(any())
@@ -262,18 +267,18 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testDoAnswer() {
+    fun `Test doAnswer() with string value`() {
         val mock = mock<Methods>()
 
         doAnswer { "Test" }
-              .whenever(mock)
-              .stringResult()
+                .whenever(mock)
+                .stringResult()
 
         expect(mock.stringResult()).toBe("Test")
     }
 
     @Test
-    fun testDoCallRealMethod() {
+    fun `When doCallRealMethod() is used, it should call reail method and return default string value`() {
         val mock = mock<Open>()
 
         doReturn("Test").whenever(mock).stringResult()
@@ -283,7 +288,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testDoNothing() {
+    fun `When doNothing() is used, it should block method from being invoked`() {
         val spy = spy(Open())
         val array = intArrayOf(3)
 
@@ -294,7 +299,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testDoReturnValue() {
+    fun `When doReturn() is used, it should return string value`() {
         val mock = mock<Methods>()
 
         doReturn("test").whenever(mock).stringResult()
@@ -303,7 +308,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testDoReturnNullValue() {
+    fun `When doReturn() is used with null value, it should return null`() {
         val mock = mock<Methods>()
 
         doReturn(null).whenever(mock).stringResult()
@@ -312,7 +317,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testDoReturnNullValues() {
+    fun `When doReturn() is used with multiple null values, it should return null values multiple times`() {
         val mock = mock<Methods>()
 
         doReturn(null, null).whenever(mock).stringResult()
@@ -322,7 +327,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testDoReturnValues() {
+    fun `When doReturn() is used with multiple values, it should return values in correct order`() {
         val mock = mock<Methods>()
 
         doReturn("test", "test2").whenever(mock).stringResult()
@@ -332,7 +337,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testDoThrowClass() {
+    fun `When doThrow() is used, it should throw exception of specified type`() {
         val mock = mock<Open>()
 
         doThrow(IllegalStateException::class).whenever(mock).go()
@@ -341,11 +346,12 @@ class MockitoTest : TestBase() {
             mock.go()
             throw AssertionError("Call should have thrown.")
         } catch (e: IllegalStateException) {
+            expect(e).toBeInstanceOf<IllegalStateException>()
         }
     }
 
     @Test
-    fun testDoThrow() {
+    fun `When doThrow() with custom message is used, it should throw exception of specified type with specified message`() {
         val mock = mock<Open>()
 
         doThrow(IllegalStateException("test")).whenever(mock).go()
@@ -356,36 +362,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testMockStubbing_lambda() {
-        /* Given */
-        val mock = mock<Open>() {
-            on { stringResult() } doReturn "A"
-        }
-
-        /* When */
-        val result = mock.stringResult()
-
-        /* Then */
-        expect(result).toBe("A")
-    }
-
-    @Test
-    fun testMockStubbing_normalOverridesLambda() {
-        /* Given */
-        val mock = mock<Open>() {
-            on { stringResult() }.doReturn("A")
-        }
-        whenever(mock.stringResult()).thenReturn("B")
-
-        /* When */
-        val result = mock.stringResult()
-
-        /* Then */
-        expect(result).toBe("B")
-    }
-
-    @Test
-    fun testMockStubbing_methodCall() {
+    fun `When on() is used with regular function doReturn, method stub should return specified value`() {
         /* Given */
         val mock = mock<Open>()
         mock<Open> {
@@ -400,7 +377,36 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testMockStubbing_builder() {
+    fun `When on() is used with infix function doReturn, method stub should return specified value`() {
+        /* Given */
+        val mock = mock<Open>() {
+            on { stringResult() } doReturn "A"
+        }
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `When stubbing same method twice, the latest stub should be applied to the method call`() {
+        /* Given */
+        val mock = mock<Open>() {
+            on { stringResult() }.doReturn("A")
+        }
+        whenever(mock.stringResult()).thenReturn("B")
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("B")
+    }
+
+    @Test
+    fun `When mock is used in builder method, the returned object should be the mock`() {
         /* Given */
         val mock = mock<Methods> { mock ->
             on { builderMethod() } doReturn mock
@@ -414,7 +420,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testMockStubbing_nullable() {
+    fun `It should be possible to stub method that returns a nullable type`() {
         /* Given */
         val mock = mock<Methods> {
             on { nullableStringResult() } doReturn "Test"
@@ -427,8 +433,25 @@ class MockitoTest : TestBase() {
         expect(result).toBe("Test")
     }
 
+    @Ignore("This test shows one problem that mockito-kotlin still needs to adress")
     @Test
-    fun testMockStubbing_doThrow() {
+    fun `It should be possible to return null from a stub method that returns a nullable type`() {
+
+        /* Given */
+        val mock = mock<Methods> {
+            on { nullableStringResult() } doReturn "null" /** Remove braces on value */
+        }
+
+        /* When */
+        val result = mock.nullableStringResult()
+
+        /* Then */
+        expect(result).toBeNull()
+        TODO("Refactor mockito-kotlin to support returning null. The above test should pass.")
+    }
+
+    @Test
+    fun `When doThrow() as infix function, method stub should throw specified exception`() {
         /* Given */
         val mock = mock<Methods> {
             on { builderMethod() } doThrow IllegalArgumentException()
@@ -439,11 +462,13 @@ class MockitoTest : TestBase() {
             mock.builderMethod()
             fail("No exception thrown")
         } catch (e: IllegalArgumentException) {
+            /* Then */
+            expect(e).toBeInstanceOf<IllegalArgumentException>()
         }
     }
 
     @Test
-    fun testMockStubbing_doThrowClass() {
+    fun `When doThrow() is used with KClass as argument, method stub should throw specified exception`() {
         /* Given */
         val mock = mock<Methods> {
             on { builderMethod() } doThrow IllegalArgumentException::class
@@ -454,11 +479,13 @@ class MockitoTest : TestBase() {
             mock.builderMethod()
             fail("No exception thrown")
         } catch (e: IllegalArgumentException) {
+            /* Then */
+            expect(e).toBeInstanceOf<IllegalArgumentException>()
         }
     }
 
     @Test
-    fun testMockStubbing_doThrowVarargs() {
+    fun `When doThrow() is used with varags as argument, method stub should throw specified exceptions in correct order`() {
         /* Given */
         val mock = mock<Methods> {
             on { builderMethod() }.doThrow(IllegalArgumentException(), UnsupportedOperationException())
@@ -469,6 +496,7 @@ class MockitoTest : TestBase() {
             mock.builderMethod()
             fail("No exception thrown")
         } catch (e: IllegalArgumentException) {
+            expect(e).toBeInstanceOf<IllegalArgumentException>()
         }
 
         try {
@@ -476,11 +504,12 @@ class MockitoTest : TestBase() {
             mock.builderMethod()
             fail("No exception thrown")
         } catch (e: UnsupportedOperationException) {
+            expect(e).toBeInstanceOf<UnsupportedOperationException>()
         }
     }
 
     @Test
-    fun testMockStubbing_doThrowClassVarargs() {
+    fun `When doThrow() is used with KClass as vararg arguments, method stub should throw specified exceptions in correct order`() {
         /* Given */
         val mock = mock<Methods> {
             on { builderMethod() }.doThrow(IllegalArgumentException::class, UnsupportedOperationException::class)
@@ -491,6 +520,7 @@ class MockitoTest : TestBase() {
             mock.builderMethod()
             fail("No exception thrown")
         } catch (e: IllegalArgumentException) {
+            expect(e).toBeInstanceOf<IllegalArgumentException>()
         }
 
         try {
@@ -498,11 +528,12 @@ class MockitoTest : TestBase() {
             mock.builderMethod()
             fail("No exception thrown")
         } catch (e: UnsupportedOperationException) {
+            expect(e).toBeInstanceOf<UnsupportedOperationException>()
         }
     }
 
     @Test
-    fun testMockStubbing_doAnswer_lambda() {
+    fun `When infix function doAnswer() is used, method stub should return specified value`() {
         /* Given */
         val mock = mock<Methods> {
             on { stringResult() } doAnswer { "result" }
@@ -516,7 +547,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testMockStubbing_doAnswer_instance() {
+    fun `When infix function doAnswer() is used with Answer instance, method stub should return specified value`() {
         /* Given */
         val mock = mock<Methods> {
             on { stringResult() } doAnswer Answer<String> { "result" }
@@ -530,7 +561,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testMockStubbing_doAnswer_returnsSelf() {
+    fun `When infix function doAnswer() is used with RETURNS_SELF, method stub should return itself`() {
         /* Given */
         val mock = mock<Methods> {
             on { builderMethod() } doAnswer Mockito.RETURNS_SELF
@@ -544,7 +575,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testMockStubbing_doAnswer_withArgument() {
+    fun `When infix function doAnswer() is used with custom arguments, method stub should return specified value`() {
         /* Given */
         val mock = mock<Methods> {
             on { stringResult(any()) } doAnswer { "${it.arguments[0]}-result" }
@@ -558,7 +589,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testMockStubbingAfterCreatingMock() {
+    fun `When stubbing method after creation of mock, it should return specified value of stub method`() {
         val mock = mock<Methods>()
 
         //create stub after creation of mock
@@ -574,7 +605,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun testOverrideDefaultStub() {
+    fun `When overriding stub, it should return specified value of overridden stub method`() {
         /* Given mock with stub */
         val mock = mock<Methods> {
             on { stringResult() } doReturn "result1"
@@ -593,7 +624,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun mock_withCustomName() {
+    fun `When specifying a custom name for a mock, this name should be used in assertionExceptions`() {
         /* Given */
         val mock = mock<Methods>("myName")
 
@@ -604,7 +635,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun mock_withCustomDefaultAnswer() {
+    fun `When specifying a default Answer for a mock, it should return this Answer as default`() {
         /* Given */
         val mock = mock<Methods>(Mockito.RETURNS_SELF)
 
@@ -616,7 +647,7 @@ class MockitoTest : TestBase() {
     }
 
     @Test
-    fun mock_withCustomDefaultAnswer_parameterName() {
+    fun `When specifying a default Answer with named prams for a mock, it should return this Answer as default`() {
         /* Given */
         val mock = mock<Methods>(defaultAnswer = Mockito.RETURNS_SELF)
 
@@ -631,7 +662,7 @@ class MockitoTest : TestBase() {
     fun mock_withSettings_extraInterfaces() {
         /* Given */
         val mock = mock<Methods>(
-              withSettings().extraInterfaces(ExtraInterface::class.java)
+                withSettings().extraInterfaces(ExtraInterface::class.java)
         )
 
         /* Then */
@@ -642,7 +673,7 @@ class MockitoTest : TestBase() {
     fun mock_withSettings_name() {
         /* Given */
         val mock = mock<Methods>(
-              withSettings().name("myName")
+                withSettings().name("myName")
         )
 
         /* When */
@@ -655,7 +686,7 @@ class MockitoTest : TestBase() {
     fun mock_withSettings_defaultAnswer() {
         /* Given */
         val mock = mock<Methods>(
-              withSettings().defaultAnswer(RETURNS_MOCKS)
+                withSettings().defaultAnswer(RETURNS_MOCKS)
         )
 
         /* When */
@@ -669,7 +700,7 @@ class MockitoTest : TestBase() {
     fun mock_withSettings_serializable() {
         /* Given */
         val mock = mock<Methods>(
-              withSettings().serializable()
+                withSettings().serializable()
         )
 
         /* Then */
@@ -680,7 +711,7 @@ class MockitoTest : TestBase() {
     fun mock_withSettings_serializableMode() {
         /* Given */
         val mock = mock<Methods>(
-              withSettings().serializable(BASIC)
+                withSettings().serializable(BASIC)
         )
 
         /* Then */
@@ -693,7 +724,7 @@ class MockitoTest : TestBase() {
         val out = mock<PrintStream>()
         System.setOut(out)
         val mock = mock<Methods>(
-              withSettings().verboseLogging()
+                withSettings().verboseLogging()
         )
 
         try {
@@ -711,7 +742,7 @@ class MockitoTest : TestBase() {
         /* Given */
         var bool = false
         val mock = mock<Methods>(
-              withSettings().invocationListeners(InvocationListener { bool = true })
+                withSettings().invocationListeners(InvocationListener { bool = true })
         )
 
         /* When */
@@ -725,7 +756,7 @@ class MockitoTest : TestBase() {
     fun mock_withSettings_stubOnly() {
         /* Given */
         val mock = mock<Methods>(
-              withSettings().stubOnly()
+                withSettings().stubOnly()
         )
 
         /* Expect */
@@ -741,7 +772,7 @@ class MockitoTest : TestBase() {
         /* Expect */
         expectErrorWithMessage("Unable to create mock instance of type") on {
             mock<ThrowingConstructor>(
-                  withSettings().useConstructor()
+                    withSettings().useConstructor()
             )
         }
     }
@@ -750,7 +781,7 @@ class MockitoTest : TestBase() {
     fun mock_withSettingsAPI_extraInterfaces() {
         /* Given */
         val mock = mock<Methods>(
-              extraInterfaces = arrayOf(ExtraInterface::class)
+                extraInterfaces = arrayOf(ExtraInterface::class)
         )
 
         /* Then */
