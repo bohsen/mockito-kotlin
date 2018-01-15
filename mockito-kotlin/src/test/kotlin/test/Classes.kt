@@ -59,6 +59,8 @@ interface Methods {
     fun string(s: String)
     fun stringVararg(vararg s: String)
     fun nullableString(s: String?)
+    fun anyType(any: Any)
+    fun anyNullType(any: Any?)
     fun int(i: Int)
     fun closedVararg(vararg c: Closed)
     fun throwableClass(t: ThrowableClass)

@@ -1064,7 +1064,7 @@ class MockitoTest : TestBase() {
     fun isA_withNonNullableString() {
         mock<Methods>().apply {
             string("")
-            verify(this).string(isA<String>())
+            verify(this).anyType(isA<String>())
         }
     }
 
@@ -1072,7 +1072,7 @@ class MockitoTest : TestBase() {
     fun isA_withNullableString() {
         mock<Methods>().apply {
             nullableString("")
-            verify(this).nullableString(isA<String>())
+            verify(this).anyNullType(isA<String>())
         }
     }
 
