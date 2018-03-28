@@ -37,13 +37,13 @@ import kotlin.reflect.KClass
 fun after(millis: Long) = Mockito.after(millis)
 
 /** Matches any object, excluding nulls. */
-inline fun <reified T : Any> any() = Mockito.any(T::class.java) ?: createInstance<T>()
+inline fun <reified T : Any> any() = Mockito.any(T::class.java) ?: createInstance()
 
 /** Matches anything, including nulls. */
-inline fun <reified T : Any> anyOrNull(): T = Mockito.any<T>() ?: createInstance<T>()
+inline fun <reified T : Any> anyOrNull(): T = Mockito.any<T>() ?: createInstance()
 
 /** Matches any vararg object, including nulls. */
-inline fun <reified T : Any> anyVararg(): T = Mockito.any<T>() ?: createInstance<T>()
+inline fun <reified T : Any> anyVararg(): T = Mockito.any<T>() ?: createInstance()
 
 /** Matches any array of type T. */
 inline fun <reified T : Any?> anyArray(): Array<T> = Mockito.any(Array<T>::class.java) ?: arrayOf()
@@ -112,7 +112,7 @@ fun ignoreStubs(vararg mocks: Any): Array<out Any> = Mockito.ignoreStubs(*mocks)
 fun inOrder(vararg mocks: Any): InOrder = Mockito.inOrder(*mocks)!!
 fun inOrder(vararg mocks: Any, evaluation: InOrder.() -> Unit) = Mockito.inOrder(*mocks).evaluation()
 
-inline fun <reified T : Any> isA(): T = Mockito.isA(T::class.java) ?: createInstance<T>()
+inline fun <reified T : Any> isA(): T = Mockito.isA(T::class.java) ?: createInstance()
 fun <T : Any> isNotNull(): T? = Mockito.isNotNull()
 fun <T : Any> isNull(): T? = Mockito.isNull()
 
