@@ -27,6 +27,7 @@ import com.nhaarman.expect.expect
 import com.nhaarman.mockitokotlin2.*
 import org.junit.After
 import org.junit.Test
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito
 import java.util.*
 
@@ -112,8 +113,21 @@ class SpyTest : TestBase() {
         expect(dateSpy.time).toBe(timeVal)
     }
 
-    private interface MyInterface
-    private open class MyClass : MyInterface
+    private interface MyInterface {
+        fun foo(value: String): String
+    }
+
+    private open class MyClass : MyInterface {
+        override fun foo(value: String) = value
+    }
     private class ClosedClass
+
+    @Test
+    fun passAnyStringToSpy() {
+        val my = spy(MyClass())
+        whenever(my.foo(any())).thenReturn("mocked") // this throws java.lang.IllegalArgumentException: Parameter specified as non-null is null
+        expect(my.foo("hello")).toBe("mocked")
+    }
+
 }
 
