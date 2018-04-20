@@ -60,7 +60,7 @@ inline fun <reified T : Any> nullableArgumentCaptor(f: KArgumentCaptor<T?>.() ->
 /**
  * Alias for [ArgumentCaptor.capture].
  */
-inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T {
+inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T? {
     return captor.capture() ?: createInstance()
 }
 

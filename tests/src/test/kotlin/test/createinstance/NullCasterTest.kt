@@ -11,7 +11,7 @@ class NullCasterTest : TestBase() {
     @Test
     fun createInstance() {
         /* When */
-        val result = createInstance(String::class)
+        val result: String = createInstance(null)
 
         /* Then */
         expect(result).toBeNull()
@@ -20,7 +20,7 @@ class NullCasterTest : TestBase() {
     @Test
     fun kotlinAcceptsNullValue() {
         /* Given */
-        val s: String = createInstance(String::class)
+        val s: String = createInstance(null)
 
         /* When */
         acceptNonNullableString(s)

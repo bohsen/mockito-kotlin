@@ -9,7 +9,7 @@ import java.util.*
 class ArgumentCaptorTest : TestBase() {
 
     @Test
-    fun argumentCaptor_withSingleValue() {
+    fun `test argumentCaptor with single value`() {
         /* Given */
         val date: Date = mock()
 
@@ -23,7 +23,7 @@ class ArgumentCaptorTest : TestBase() {
     }
 
     @Test
-    fun argumentCaptor_withNullValue_usingNonNullable() {
+    fun `test argumentCaptor with null value using non-nullable type`() {
         /* Given */
         val m: Methods = mock()
 
@@ -37,7 +37,7 @@ class ArgumentCaptorTest : TestBase() {
     }
 
     @Test
-    fun argumentCaptor_withNullValue_usingNullable() {
+    fun `test argumentCaptor with null value using nullable type`() {
         /* Given */
         val m: Methods = mock()
 
@@ -45,13 +45,14 @@ class ArgumentCaptorTest : TestBase() {
         m.nullableString(null)
 
         /* Then */
+//        val captor = argumentCaptor<String?>() // TODO: Refactor argumentCaptor to take nullable values
         val captor = nullableArgumentCaptor<String>()
         verify(m).nullableString(captor.capture())
         expect(captor.lastValue).toBeNull()
     }
 
     @Test
-    fun argumentCaptor_multipleValues() {
+    fun `test argumentCaptor with multiple non-null values`() {
         /* Given */
         val date: Date = mock()
 
@@ -66,7 +67,7 @@ class ArgumentCaptorTest : TestBase() {
     }
 
     @Test
-    fun argumentCaptor_multipleValuesIncludingNull() {
+    fun `test nullableArgumentCaptor with multiple values including null`() {
         /* Given */
         val m: Methods = mock()
 
@@ -81,7 +82,23 @@ class ArgumentCaptorTest : TestBase() {
     }
 
     @Test
-    fun argumentCaptor_callProperties() {
+    fun `test argumentCaptor with multiple values including null`() {
+        /* Given */
+        val m: Methods = mock()
+
+        /* When */
+        m.nullableString("test")
+        m.nullableString(null)
+
+        /* Then */
+        //  val captor = argumentCaptor<String?>() // TODO: Refactor argumentCaptor to take nullable values
+        val captor = nullableArgumentCaptor<String>()
+        verify(m, times(2)).nullableString(captor.capture())
+        expect(captor.allValues).toBe(listOf("test", null))
+    }
+
+    @Test
+    fun `test argumentCaptor call properties`() {
         /* Given */
         val m: Methods = mock()
 
@@ -104,7 +121,7 @@ class ArgumentCaptorTest : TestBase() {
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
-    fun argumentCaptor_callPropertyNotAvailable() {
+    fun `test argumentCaptor call property not available`() {
         /* Given */
         val m: Methods = mock()
 
@@ -114,7 +131,7 @@ class ArgumentCaptorTest : TestBase() {
         /* Then */
         argumentCaptor<Int>().apply {
             verify(m).int(capture())
-
+            expect(firstValue).toBe(1)
             expect(secondValue).toBe(2)
         }
     }
