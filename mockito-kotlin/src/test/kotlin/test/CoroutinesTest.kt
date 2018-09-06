@@ -3,12 +3,13 @@
 package test
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyBlocking
-import kotlinx.coroutines.experimental.*
+import com.nhaarman.mockitokotlin2.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.withContext
 import org.junit.Test
+import org.mockito.Mockito
 
 
 class CoroutinesTest {
@@ -146,6 +147,18 @@ class CoroutinesTest {
             verify(suspendFunction).invoke()
         }
     }
+
+    @Test
+    fun otherTest() {
+        val foo: Foo = mock {
+            on { runBlocking { bar(any()) } } doReturn ("message")
+        }
+        Mockito.validateMockitoUsage()
+    }
+}
+
+interface Foo {
+    suspend fun bar(arg: String): String
 }
 
 interface SomeInterface {

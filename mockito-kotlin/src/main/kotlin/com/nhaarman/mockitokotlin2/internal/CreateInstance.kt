@@ -49,7 +49,7 @@ inline fun <reified T : Any> createInstance(): T {
 
 fun <T : Any> createInstance(kClass: KClass<T>?): T =
     when (kClass?.javaObjectType) {
-        String::class.java -> "" as T // Mockito.anyString() as T does not work probably because of kotlin platform type
+        String::class.java -> "" as T
         Int::class.java -> Mockito.anyInt() as T
         Boolean::class.java -> Mockito.anyBoolean() as T
         Byte::class.java -> anyByte() as T

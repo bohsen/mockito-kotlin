@@ -244,7 +244,7 @@ class OngoingStubbingTest : TestBase() {
     fun stubbingTwiceWithCheckArgumentMatchers_throwsException() {
         /* Expect */
         expectErrorWithMessage("null").on {
-            mock<Methods> {
+            mock<Methods> { it ->
                 on { stringResult(check { }) } doReturn "A"
                 on { stringResult(check { }) } doReturn "B"
             }
