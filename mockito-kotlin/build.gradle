@@ -2,6 +2,7 @@ apply plugin: 'kotlin'
 apply from: '../publishing.gradle'
 apply plugin: 'org.jetbrains.dokka'
 
+
 buildscript {
     ext.kotlin_version = "1.2.61"
 
@@ -21,21 +22,42 @@ buildscript {
 repositories {
     mavenCentral()
     jcenter()
+    maven { url "https://dl.bintray.com/spekframework/spek-dev" }
 }
 
 dependencies {
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.25.3'
 
     compile "org.mockito:mockito-core:2.21.0"
 
     testCompile 'junit:junit:4.12'
+
     testCompile 'com.nhaarman:expect.kt:1.0.0'
 
-    testCompile  "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     testCompile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.25.3'
 
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.25.3"
+
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.2.0'
+
+    testImplementation ('org.spekframework.spek2:spek-dsl-jvm:2.0.0-alpha.2')  {
+        exclude group: 'org.jetbrains.kotlin'
+    }
+    testRuntimeOnly ('org.spekframework.spek2:spek-runner-junit5:2.0.0-alpha.2') {
+        exclude group: 'org.junit.platform'
+        exclude group: 'org.jetbrains.kotlin'
+    }
+
+    // spek requires kotlin-reflect, can be omitted if already in the classpath
+    testRuntimeOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+}
+
+// setup the test task
+test {
+    useJUnitPlatform {
+        includeEngines 'spek2'
+    }
 }
 
 dokka {
