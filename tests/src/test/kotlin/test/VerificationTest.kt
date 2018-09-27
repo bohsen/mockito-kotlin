@@ -103,4 +103,20 @@ class VerificationTest : TestBase() {
             expect(e.message).toContain("Test")
         }
     }
+
+    interface UnderTest {
+        fun f(s: String, i: Int): String
+    }
+
+    @Test
+    fun verifications() {
+
+        val underTest = mock<UnderTest>()
+
+        underTest.f("s1", 1)
+        underTest.f("s2", 2)
+
+        verify(underTest).f(eq("s1"), eq(1))
+        verify(underTest).f(eq("s2"), eq(2))
+    }
 }

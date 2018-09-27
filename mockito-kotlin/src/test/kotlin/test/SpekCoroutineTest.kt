@@ -1,20 +1,16 @@
 package test
 
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyBlocking
 import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withContext
-import org.mockito.ArgumentMatchers.anyInt
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
-object SpekTestCoroutines : Spek({
+object SubjectClassSpec : Spek({
 
-    val mockDependency by memoized { mock<Foo>() }
+    val mockDependency by memoized { mock<Foo>()}
     val subject by memoized { Bar(mockDependency) }
 
     describe("doing something") {
@@ -22,18 +18,17 @@ object SpekTestCoroutines : Spek({
             subject.result(42)
 
             it("uses the dependency in a certain way") {
-                verifyBlocking(mockDependency) { suspending() }
+                verify(mockDependency).nonsuspending()
             }
         }
     }
 })
 
 interface Foo {
-    suspend fun suspending(): Int
     fun nonsuspending(): Int
 }
 
 class Bar(val foo: Foo) {
-    suspend fun result(r: Int) = withContext(CommonPool) { foo.suspending() }
+    suspend fun result(r: Int) = withContext(CommonPool) { foo.nonsuspending() }
 }
 
