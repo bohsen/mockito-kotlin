@@ -25,7 +25,6 @@
 
 package com.nhaarman.mockitokotlin2
 
-import com.nhaarman.mockitokotlin2.internal.createInstance
 import org.mockito.ArgumentMatcher
 import org.mockito.Mockito
 
@@ -40,18 +39,18 @@ fun <T> same(value: T): T {
 }
 
 /** Matches any object, excluding nulls. */
-inline fun <reified T : Any> any(): T {
-    return Mockito.any(T::class.java) ?: createInstance()
+inline fun <reified T : Any?> any(): T {
+    return Mockito.any(T::class.java)
 }
 
 /** Matches anything, including nulls. */
-inline fun <reified T : Any> anyOrNull(): T {
-    return Mockito.any<T>() ?: createInstance()
+inline fun <reified T : Any?> anyOrNull(): T {
+    return Mockito.any<T>()
 }
 
 /** Matches any vararg object, including nulls. */
-inline fun <reified T : Any> anyVararg(): T {
-    return Mockito.any<T>() ?: createInstance()
+inline fun <reified T : Any?> anyVararg(): T {
+    return Mockito.any<T>()
 }
 
 /** Matches any array of type T. */
@@ -65,10 +64,8 @@ inline fun <reified T : Any?> anyArray(): Array<T> {
  *
  * @param predicate An extension function on [T] that returns `true` when a [T] matches the predicate.
  */
-inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean): T {
-    return Mockito.argThat { arg: T? -> arg?.predicate() ?: false } ?: createInstance(
-          T::class
-    )
+inline fun <reified T : Any?> argThat(noinline predicate: T.() -> Boolean): T {
+    return Mockito.argThat { arg: T? -> arg?.predicate() ?: false }
 }
 
 /**
@@ -77,8 +74,8 @@ inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean): T {
  *
  * @param matcher The ArgumentMatcher on [T] to be registered.
  */
-inline fun <reified T : Any> argThat(matcher: ArgumentMatcher<T>): T {
-    return Mockito.argThat(matcher) ?: createInstance()
+inline fun <reified T : Any?> argThat(matcher: ArgumentMatcher<T>): T {
+    return Mockito.argThat(matcher)
 }
 
 /**
@@ -106,8 +103,8 @@ inline fun <reified T : Any> argWhere(noinline predicate: (T) -> Boolean): T {
 /**
  * Argument that implements the given class.
  */
-inline fun <reified T : Any> isA(): T {
-    return Mockito.isA(T::class.java) ?: createInstance()
+inline fun <reified T : Any?> isA(): T {
+    return Mockito.isA(T::class.java)
 }
 
 /**

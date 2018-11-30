@@ -172,7 +172,7 @@ class MatchersTest : TestBase() {
     fun isA_withNullableString() {
         mock<Methods>().apply {
             nullableString("")
-            verify(this).nullableString(isA<String>())
+            verify(this).nullableString(isA())
         }
     }
 

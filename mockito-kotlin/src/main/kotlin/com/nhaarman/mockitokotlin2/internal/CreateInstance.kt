@@ -25,11 +25,12 @@
 
 package com.nhaarman.mockitokotlin2.internal
 
+import com.nhaarman.mockitokotlin2.mock
 import kotlin.reflect.KClass
 import java.lang.reflect.Array as JavaArray
 
 inline fun <reified T : Any> createInstance(): T {
-    return createInstance(T::class)
+    return mock()
 }
 
 fun <T : Any> createInstance(kClass: KClass<T>): T {

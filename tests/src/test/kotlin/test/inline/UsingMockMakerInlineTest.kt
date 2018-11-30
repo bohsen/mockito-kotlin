@@ -24,10 +24,8 @@
 
 import com.nhaarman.expect.expect
 import com.nhaarman.mockitokotlin2.*
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
-import test.mockMakerInlineEnabled
 import java.io.IOException
 import java.math.BigInteger
 
@@ -45,8 +43,8 @@ class UsingMockMakerInlineTest {
 
     @Before
     fun setup() {
-        mockMakerInlineEnabled = null
-        assumeTrue(mockMakerInlineEnabled())
+//        mockMakerInlineEnabled = null
+//        assumeTrue(mockMakerInlineEnabled())
     }
 
     @Test
